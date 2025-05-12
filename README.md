@@ -15,7 +15,7 @@ conda env create -f environment.yml
 conda activate gfdl_tracking
 ```
 
-The tracker code can then be built with the helper scripts in `/code`
+The tracker code can then be built with the helper scripts in `/libs`
 ```
 cd libs/
 ./build_all.sh
