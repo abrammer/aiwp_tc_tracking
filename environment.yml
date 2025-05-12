@@ -1,4 +1,4 @@
-name: gfdl_tracking_test
+name: gfdl_tracking
 channels:
   - conda-forge
 dependencies:
