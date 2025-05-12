@@ -4,9 +4,6 @@
 # Edited by Caitlyn McAllister  --> caitlyn.mcallister@noaa.gov
 #--------------------------------------------------------------
 
-DESTINATION=/mnt/tcnas02/brammer/ai_models/
-MODEL_SRC_DIR=/mnt/aiweathernas/ai-models
-
 # edited by A Brammer to run off ai-weather model outputs at CIRA
 # Call datetime and up to 4 optional args
 #1 = YYYYMMDDHHmm e.g. 2024081100
@@ -15,23 +12,15 @@ MODEL_SRC_DIR=/mnt/aiweathernas/ai-models
 #4 = ATCF Tech (defaults to #1)
 #5 = inital condition source => GFS / ERA
 
+export curymdh=${1:-2024081100} # USER - date from model initilization date
+ainame=${2:-GRAP}
+aiversion=${3:-100}
+atcfname=${4:-${ainame}}
+srcname=${5:-GFS}
+
 #input file name will be constructed as such:
 #modelfname=${#2}_v${#3}_${#5}_${#1}_f000_f240_06.nc
-
-
 #######
-# everything below should "just run" given the correct environment and input files
-
-export PS4=' + run_tracker.sh line $LINENO: '
-
-set -e
-ulimit -c unlimited
-
-#-----------------------------------------------------------
-# Set critical initial variables and directories
-#-----------------------------------------------------------
-
-export curymdh=${1:-2024081100} # USER - date from model initilization date
 
 # USER - add paths to location of repository (i.e. home=) and location of workroot
 # no other paths should need to be changed
@@ -40,13 +29,23 @@ export home=$(dirname $(dirname $(readlink -fm $0)))
 export workroot=${home}/work
 export rundir=${home}/run
 export execdir=${home}/exec
-ainame=${2:-GRAP}
-aiversion=${3:-100}
-atcfname=${4:-${ainame}}
-srcname=${5:-GFS}
+export vitaldir=${home}/files/vitals
+
+source ${rundir}/config
+echo "DESTINATION: "${DESTINATION}
+echo "MODEL_SRC_DIR: "${MODEL_SRC_DIR}
+echo "SAVE_OUTPUT: "${SAVE_OUTPUT}
+#-----------------------------------------------------------
+# Set critical initial variables and directories
+#-----------------------------------------------------------
+
+# everything below should "just run" given the correct environment and input files
+export PS4=' + run_tracker.sh line $LINENO: '
+set -e
+ulimit -c unlimited
+
 
 ATCFNAME=` echo "${atcfname}" | tr '[a-z]' '[A-Z]'`
-SAVE_OUTPUT=true
 MODEL_SRC=${MODEL_SRC_DIR}/${ainame}_v${aiversion}
 if [ ${srcname} != "GFS" ]; then
 	MODEL_SRC="${MODEL_SRC}_${srcname}"
@@ -58,7 +57,7 @@ modelfname=${ainame}_v${aiversion}_${srcname}_${curymdh}_f000_f240_06.nc
 # land-sea mask record
 export ncdf_ls_mask_filename=
 
-export tcvit_date=${home}/files/bin/tcvit_date
+export tcvit_date=${home}/run/tcvit_date
 export NDATE=${home}/files/bin/ndate.x
 
 export gribver=1
@@ -135,7 +134,7 @@ data_file1=track_file.nc #GRAP_v100_gfs_2024010400_f000_f240_06.nc
 #--------------------------------------------------------------------------------
 tcvit_logfile=${rundir}/tcvit_logfile.${yyyy}.txt
 
-${tcvit_date} ${curymdh} | egrep "JTWC|NHC"           | \
+${tcvit_date} ${curymdh} ${vitaldir} | egrep "JTWC|NHC"           | \
 grep -v TEST | awk 'substr($0,6,1) !~ /8/ {print $0}'   \
 >${wdir}/vitals.${curymdh}
 
@@ -588,10 +587,10 @@ do
 	    basin=${line:0:2}; 
 	    echo ${line}
 	    if [ ${trkrtype} == 'tracker' ];then
-	    	echo ${DATA}/a${basin,,}${line:4:2}${line:8:4}.${atcfname}.${line:8:10}.dat
+#	    	echo ${DATA}/a${basin,,}${line:4:2}${line:8:4}.${atcfname}.${line:8:10}.dat
 	    	echo  ${line} >> ${DATA}/a${basin,,}${line:4:2}${line:8:4}.${atcfname}.${line:8:10}.dat ;
 	    else
-		echo ${DATA}/a${basin,,}${line:5:2}${line:10:4}.${atcfname}.${line:10:10}.dat
+#		echo ${DATA}/a${basin,,}${line:5:2}${line:10:4}.${atcfname}.${line:10:10}.dat
 		echo ${line} >> ${DATA}/a${basin,,}${line:5:2}${line:10:4}.${atcfname}.${line:10:10}.dat
            fi
 	    

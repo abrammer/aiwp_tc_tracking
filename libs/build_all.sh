@@ -19,6 +19,7 @@ fi
 ./build_w3emc.sh
 ./build_g2.sh
 ./build_track.sh
+./build_ndate.sh
 
 
 

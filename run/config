@@ -1,0 +1,3 @@
+DESTINATION=./
+MODEL_SRC_DIR=/mnt/aiweathernas/ai-models
+SAVE_OUTPUT=true
