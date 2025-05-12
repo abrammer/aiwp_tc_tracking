@@ -17,7 +17,7 @@ conda activate gfdl_tracking
 
 The tracker code can then be built with the helper scripts in `/code`
 ```
-cd code
+cd libs/
 ./build_all.sh
 ```
 
