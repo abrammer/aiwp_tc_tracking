@@ -9,4 +9,4 @@
 	url = https://github.com/NOAA-EMC/NCEPLIBS-bacio.git
 [submodule "libs/GFDL-VortexTracker"]
 	path = libs/GFDL-VortexTracker
-	url = https://github.com/abrammer/GFDL-VortexTracker.git
+	url = https://github.com/NOAA-GFDL/GFDL-VortexTracker.git
