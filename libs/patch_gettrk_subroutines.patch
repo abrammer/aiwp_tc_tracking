@@ -1,0 +1,27 @@
+diff --git a/code/src/tracker/gettrk_subroutines.f b/code/src/tracker/gettrk_subroutines.f
+index c498b1a..a5644bc 100644
+--- a/code/src/tracker/gettrk_subroutines.f
++++ b/code/src/tracker/gettrk_subroutines.f
+@@ -883,12 +883,16 @@ c       data for this forecast time.
+         v     = -9999.0
+         slp   = -9999.0 
+         tmean = -9999.0
+-        sst   = -9999.0
+-        q850  = -9999.0
+-        rh    = -9999.0 
+-        spfh  = -9999.0
+-        temperature  = -9999.0
+-        omega500  = -9999.0
++        if (sstflag == 'y' .or. sstflag == 'Y') then
++          sst  = -9999.0
++        endif
++        if (genflag == 'y')then
++          q850  = -9999.0
++          rh    = -9999.0 
++          spfh  = -9999.0
++          temperature  = -9999.0
++          omega500  = -9999.0
++        endif
+ 
+         readflag    = .FALSE.
+         readgenflag = .FALSE.

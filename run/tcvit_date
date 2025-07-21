@@ -23,10 +23,11 @@ cYYYY=`date +%Y`
 #        awk '{ if (length($0) > 100) {print $0} }'              | \
 echo ${vitdir}
 
-if [ ${yyyy} -eq ${cYYYY} ]; then
-    wget -N https://hurricanes.ral.ucar.edu/repository/data/tcvitals_open/combined_tcvitals.${yyyy}.dat  -P ${vitdir}
-    ln -sf ${vitdir}/combined_tcvitals.${yyyy}.dat ${vitdir}/syndat_tcvitals.${yyyy}
-fi
+
+#if [ ${yyyy} -eq ${cYYYY} ]; then
+#    wget -N https://hurricanes.ral.ucar.edu/repository/data/tcvitals_open/combined_tcvitals.${yyyy}.dat  -P ${vitdir}
+#    ln -sf ${vitdir}/combined_tcvitals.${yyyy}.dat ${vitdir}/syndat_tcvitals.${yyyy}
+#fi
 echo "${yyyymmdd} ${hh}"
 #set -x
 grep  "${yyyymmdd} ${hh}" ${vitdir}/syndat_tcvitals.${yyyy}   | \

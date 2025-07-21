@@ -14,9 +14,20 @@
 
 export curymdh=${1:-2024081100} # USER - date from model initilization date
 ainame=${2:-GRAP}
-aiversion=${3:-100}
-atcfname=${4:-${ainame}}
-srcname=${5:-GFS}
+srcname=${3:-GFS}
+aiversion=${4:-100}
+
+declare -A atcfarr=(
+ ["GRAP_GFS"]="NGRP"
+ ["GRAP_IFS"]="EGRP"
+ ["PANG_GFS"]="NPNG"
+ ["PANG_IFS"]="EPNG"
+ ["FOUR_GFS"]="NFOR"
+ ["FOUR_IFS"]="EFOR"
+ ["AURO_GFS"]="NAUR"
+ ["AURO_IFS"]="EAUR"
+)
+atcfname=${atcfarr[${ainame}_${srcname}]}
 
 #input file name will be constructed as such:
 #modelfname=${#2}_v${#3}_${#5}_${#1}_f000_f240_06.nc
@@ -35,6 +46,9 @@ source ${rundir}/config
 echo "DESTINATION: "${DESTINATION}
 echo "MODEL_SRC_DIR: "${MODEL_SRC_DIR}
 echo "SAVE_OUTPUT: "${SAVE_OUTPUT}
+
+${PYTHON_EXE} -V
+which ${PYTHON_EXE}
 #-----------------------------------------------------------
 # Set critical initial variables and directories
 #-----------------------------------------------------------
@@ -46,11 +60,11 @@ ulimit -c unlimited
 
 
 ATCFNAME=` echo "${atcfname}" | tr '[a-z]' '[A-Z]'`
-MODEL_SRC=${MODEL_SRC_DIR}/${ainame}_v${aiversion}
-if [ ${srcname} != "GFS" ]; then
-	MODEL_SRC="${MODEL_SRC}_${srcname}"
-	curymdh=${curymdh}00
-fi
+MODEL_SRC=${MODEL_SRC_DIR}/${ainame}_v${aiversion}_${srcname}
+#if [ ${srcname} != "GFS" ]; then
+#	MODEL_SRC="${MODEL_SRC}_${srcname}"
+#	curymdh=${curymdh}00
+#fi
 modelfname=${ainame}_v${aiversion}_${srcname}_${curymdh}_f000_f240_06.nc
 # this next variable specifies the name of a seperate land-sea mask file
 # that can be used in case the main input netcdf file does not contain its own
@@ -97,6 +111,7 @@ then
 fi
 
 wdir=${workroot}/${atcfname}_${curymdh}
+echo ${wdir}
 if [ ! -d ${wdir} ]; then mkdir -p ${wdir}; fi
 
 echo " "
@@ -120,7 +135,6 @@ if [ ! -f ${modelfname} ]; then
 fi
 if [ ! -f track_file.nc ];then
     echo "running python preprocess to make compatible netcdf"
-    PYTHON_EXE=${CONDA_PREFIX}/bin/python
     ${PYTHON_EXE} ${rundir}/expand_netcdf.py ${modelfname}
     if [ $? -ne 0 ]; then
         exit 1
@@ -447,7 +461,7 @@ echo "      user_wants_to_track_zetasfc='${user_wants_to_track_zetasfc}',"      
 echo "      user_wants_to_track_thick500850='${user_wants_to_track_thick500850}'," >>${namelist}
 echo "      user_wants_to_track_thick200500='${user_wants_to_track_thick200500}'," >>${namelist}
 echo "      user_wants_to_track_thick200850='${user_wants_to_track_thick200850}'/" >>${namelist}
-echo "&verbose verb=0,verb_g2=0/"                                      >>${namelist}
+echo "&verbose verb=3,verb_g2=0/"                                      >>${namelist}
 echo "&sheardiaginfo shearflag='${shear_calc_flag}'/"                  >>${namelist}
 echo "&sstdiaginfo sstflag='${sstflag}'/"                              >>${namelist}
 echo "&gendiaginfo genflag='${genflag}',"                              >>${namelist}
@@ -588,10 +602,10 @@ do
 	    echo ${line}
 	    if [ ${trkrtype} == 'tracker' ];then
 #	    	echo ${DATA}/a${basin,,}${line:4:2}${line:8:4}.${atcfname}.${line:8:10}.dat
-	    	echo  ${line} >> ${DATA}/a${basin,,}${line:4:2}${line:8:4}.${atcfname}.${line:8:10}.dat ;
+	    	echo  "${line}" >> ${DATA}/a${basin,,}${line:4:2}${line:8:4}.${atcfname}.${line:8:10}.dat ;
 	    else
 #		echo ${DATA}/a${basin,,}${line:5:2}${line:10:4}.${atcfname}.${line:10:10}.dat
-		echo ${line} >> ${DATA}/a${basin,,}${line:5:2}${line:10:4}.${atcfname}.${line:10:10}.dat
+		echo "${line}" >> ${DATA}/a${basin,,}${line:5:2}${line:10:4}.${atcfname}.${line:10:10}.dat
            fi
 	    
     fi; 

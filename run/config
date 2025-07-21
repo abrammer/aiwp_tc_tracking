@@ -1,3 +1,5 @@
-DESTINATION=./
-MODEL_SRC_DIR=/mnt/aiweathernas/ai-models
+DESTINATION=/mnt/tcnas02/brammer/ai_models/  # directories will be created under this location for the output files
+MODEL_SRC_DIR=/mnt/aiweathernas/aiwp-realtime/output_data/  # this is where the script will look for the netcdf from the aiwp models
 SAVE_OUTPUT=true
+
+PYTHON_EXE=/home/abrammer/miniconda3/envs/gfdl_tracking/bin/python

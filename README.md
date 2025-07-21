@@ -27,6 +27,11 @@ A run script is provided at `run/run_cira_tracker.sh`
 This takes a combination of command line arguments to choose date, model version, initial fields etc.  Details are found at the top of the script.
 Assuming the same files and the same directory structure, then changing `run/config` should be all that's needed to source input files and select output destination. 
 
+To run all versions in one go: `run/run_all.sh` 
+This is also a good place to look for example on running each model seperately.  
+
+Change the options in `run/config` to match your system.  
+
 
 ## More Info:
 
