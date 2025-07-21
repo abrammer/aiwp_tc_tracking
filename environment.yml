@@ -1,0 +1,14 @@
+name: gfdl_tracking_test
+channels:
+  - conda-forge
+dependencies:
+  - conda-forge::gfortran
+  - conda-forge::libnetcdf
+  - conda-forge::libpng
+  - conda-forge::g2clib
+  - conda-forge::nceplibs-g2c
+  - cmake
+  - conda-forge::netcdf-fortran
+  - conda-forge::jasper
+  - xarray
+  - netcdf4

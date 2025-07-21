@@ -1,0 +1,8 @@
+test_calccorr 1 0.00694609
+test_avgcalc 1 0.00567285
+test_calc_vmag 1 0.00537988
+test_getcorr 1 0.00540517
+test_stdevcalc 1 0.00510641
+test_wtavrg_lon 1 0.00542172
+test_wtavrg 1 0.00514558
+---

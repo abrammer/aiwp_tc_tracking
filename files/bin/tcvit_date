@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Script written by Tim Marchok
+
+if [ $# -lt 1 ]; then
+  echo " "
+  echo "  Script `basename $0` will get all the TC Vitals records for a "
+  echo "  particular date.  At the command line, you need to supply the "
+  echo "  date in yyyymmddhh format."
+  echo " "
+  echo "  Usage: `basename $0` yyyymmddhh"
+  echo " "
+  exit 8
+fi
+
+ymdh=$1
+yyyy=`     echo $ymdh | cut -c1-4`
+yyyymmdd=` echo $ymdh | cut -c1-8`
+hh=`       echo $ymdh | cut -c9-10`
+
+cYYYY=`date +%Y`
+#        awk '{ if (length($0) > 100) {print $0} }'              | \
+vitdir=$(dirname $(dirname $(readlink -f ${BASH_SOURCE[0]}) ))/vitals
+echo ${vitdir}
+
+if [ ${yyyy} -eq ${cYYYY} ]; then
+    wget -N https://hurricanes.ral.ucar.edu/repository/data/tcvitals_open/combined_tcvitals.${yyyy}.dat  -P ${vitdir}
+    ln -sf ${vitdir}/combined_tcvitals.${yyyy}.dat ${vitdir}/syndat_tcvitals.${yyyy}
+fi
+echo "${yyyymmdd} ${hh}"
+#set -x
+grep  "${yyyymmdd} ${hh}" ${vitdir}/syndat_tcvitals.${yyyy}   | \
+        grep -v ' 8[0-9][A-Z]'                                | \
+        sort -k2 -k4 -n -k5 -n -u                             | \
+        sort -k4 -n -k5 -n
