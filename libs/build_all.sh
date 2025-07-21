@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
+./init_subs.sh
 git apply patch_gettrk_subroutines.patch
 
 nfconfig=$(nf-config --has-f90)
@@ -17,7 +18,6 @@ if [[ $? != 0 ]]; then
 fi
 
 mkdir ../exec
-./init_subs.sh
 ./build_bacio.sh
 ./build_w3emc.sh
 ./build_g2.sh
