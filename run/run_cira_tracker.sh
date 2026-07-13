@@ -126,23 +126,6 @@ export DATA=${wdir}  # ${workroot}/${PDY}${cyc}
 data_dir=${wdir}
 cd $wdir
 
-#set -x
-if [ ! -f ${modelfname} ]; then
-    #wget https://noaa-oar-mlwp-data.s3.amazonaws.com/FOUR_v200/${yyyy}/${PDY:4:4}/FOUR_v200_GFS_${curymdh}_f000_f240_06.nc
-    #scp dorian:/mnt/mlnas01/ai-models/GRAP_v100/${yyyy}/${PDY:4:4}/GRAP_v100_GFS_${curymdh}_f000_f240_06.nc ./
-    ln -s ${MODEL_SRC}/${yyyy}/${PDY:4:4}/${modelfname} ./ 
-    echo "linking local file in to work directory"
-fi
-if [ ! -f track_file.nc ];then
-    echo "running python preprocess to make compatible netcdf"
-    ${PYTHON_EXE} ${rundir}/expand_netcdf.py ${modelfname}
-    if [ $? -ne 0 ]; then
-        exit 1
-    fi
-fi
-#set +x
-data_file1=track_file.nc #GRAP_v100_gfs_2024010400_f000_f240_06.nc
-
 #--------------------------------------------------------------------------------
 # Check the TC Vitals to see if there are any observed storms for the input ymdh.
 #--------------------------------------------------------------------------------
@@ -169,8 +152,38 @@ if [ ${num_storms} -gt 0 ]; then
   cat ${wdir}/vitals.${curymdh} >> ${tcvit_logfile}
   echo " "
 else
-  touch ${wdir}/vitals.${curymdh}
+  echo "No storms exist"
+  rm -rf ${wdir}
+  exit 0 
 fi
+
+#----------------
+#  get the model output and transform it into gfdl friendly structure
+#---------------
+
+#set -x
+if [ ! -f ${modelfname} ]; then
+    #wget https://noaa-oar-mlwp-data.s3.amazonaws.com/FOUR_v200/${yyyy}/${PDY:4:4}/FOUR_v200_GFS_${curymdh}_f000_f240_06.nc
+    #scp dorian:/mnt/mlnas01/ai-models/GRAP_v100/${yyyy}/${PDY:4:4}/GRAP_v100_GFS_${curymdh}_f000_f240_06.nc ./
+    ln -s ${MODEL_SRC}/${yyyy}/${PDY:4:4}/${modelfname} ./ 
+    echo "linking local file in to work directory"
+fi
+if [ ! -f track_file.nc ];then
+    echo "running python preprocess to make compatible netcdf"
+    if [[ ${modelfname} == *.nc ]]; then
+    	${PYTHON_EXE} ${rundir}/expand_netcdf.py ${modelfname}
+    elif [[ ${modelfname} == *.grib ]]; then
+    	${PYTHON_EXE} ${rundir}/expand_grib.py ${modelfname}
+   else
+	echo "file type not recognised, expects .nc or .grib "
+	exit 1
+   fi
+    if [ $? -ne 0 ]; then
+        exit 1
+    fi
+fi
+#set +x
+data_file1=track_file.nc #GRAP_v100_gfs_2024010400_f000_f240_06.nc
 
 #------------------------------------------------------------------------
 # Set variables & parameters for the input namelist for T-SHiELD...

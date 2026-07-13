@@ -31,6 +31,6 @@ echo ${vitdir}
 echo "${yyyymmdd} ${hh}"
 #set -x
 grep  "${yyyymmdd} ${hh}" ${vitdir}/syndat_tcvitals.${yyyy}   | \
-        grep -v ' 8[0-9][A-Z]'                                | \
+	grep -v '^.....[5-8]'				      | \
         sort -k2 -k4 -n -k5 -n -u                             | \
         sort -k4 -n -k5 -n
